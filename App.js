@@ -99,7 +99,7 @@ export default function App() {
 
       if (bytes) {
         await NfcManager.ndefHandler.writeNdefMessage(bytes);
-        Alert.alert('Başarılı!', 'Veri karta başarıyla işlendi kanka!');
+        Alert.alert('Başarılı!', 'Veri karta başarıyla yazıldı.');
         setCardId('Yazma Başarılı!');
         setWriteMode('NONE'); 
       }
@@ -128,7 +128,7 @@ export default function App() {
           <Text style={{ fontSize: 64 }}>📡</Text>
         </View>
         <Text style={styles.descriptionText}>
-          Yakındaki bir NFC etiketini taramak için butona dokunun.
+          NFC taramasını başlatmak için tıklayın.
         </Text>
         
         <TouchableOpacity style={styles.primaryButton} onPress={startNfcScan} disabled={loading}>
@@ -136,7 +136,7 @@ export default function App() {
         </TouchableOpacity>
 
         <View style={styles.statusCard}>
-          <Text style={styles.statusLabel}>DURUM / UID</Text>
+          <Text style={styles.statusLabel}>DURUM</Text>
           <Text style={styles.statusValue}>{cardId}</Text>
         </View>
       </View>
@@ -148,13 +148,13 @@ export default function App() {
       {renderHeader('NFC Yaz')}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.descriptionText}>
-          Boş bir etikete veya yeniden yazılabilir bir NFC çipine kaydetmek istediğiniz veri tipini seçin.
+          Yazmak istediğiniz verinin tipini seçin.
         </Text>
 
         <TouchableOpacity style={styles.optionCard} onPress={() => setWriteMode('WEBSITE')}>
           <View style={styles.optionTextContainer}>
             <Text style={styles.optionTitle}>🌐 Web Sitesi</Text>
-            <Text style={styles.optionDesc}>Bir URL veya web bağlantısını kodlayın.</Text>
+            <Text style={styles.optionDesc}>Okutulduğunda otomatik olarak web sitesine gider.</Text>
           </View>
           <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
@@ -162,7 +162,7 @@ export default function App() {
         <TouchableOpacity style={styles.optionCard} onPress={() => setWriteMode('CONTACT')}>
           <View style={styles.optionTextContainer}>
             <Text style={styles.optionTitle}>👤 Kişi Kartı</Text>
-            <Text style={styles.optionDesc}>VCard bilgilerini aktarın. Rehbere ekleme imkanı sağlar.</Text>
+            <Text style={styles.optionDesc}>Okutulduğunda kişiyi rehbere kaydeder.</Text>
           </View>
           <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
@@ -170,7 +170,7 @@ export default function App() {
         <TouchableOpacity style={styles.optionCard} onPress={() => setWriteMode('BLUETOOTH')}>
           <View style={styles.optionTextContainer}>
             <Text style={styles.optionTitle}>🎧 Bluetooth</Text>
-            <Text style={styles.optionDesc}>Eşleşme bilgilerini yazın. Kulaklıkları hızlıca bağlar.</Text>
+            <Text style={styles.optionDesc}>Okutulduğunda bluetooth cihazınızı otomatik olarak eşler.</Text>
           </View>
           <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
@@ -215,11 +215,11 @@ export default function App() {
           )}
 
           <TouchableOpacity style={styles.primaryButton} onPress={writeNfcData} disabled={loading}>
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Karta Yaz</Text>}
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Veriyi Yaz</Text>}
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.ghostButton} onPress={() => setWriteMode('NONE')} disabled={loading}>
-            <Text style={styles.ghostButtonText}>İptal ve Geri Dön</Text>
+            <Text style={styles.ghostButtonText}>İptal</Text>
           </TouchableOpacity>
 
         </ScrollView>
