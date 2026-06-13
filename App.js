@@ -9,7 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [cardId, setCardId] = useState('Kart bekleniyor...');
   
-  // Mod Yönetimi: 'NONE', 'WEBSITE', 'CONTACT', 'WIFI', 'BLUETOOTH'
+  // Mod Yönetimi: 'NONE', 'WEBSITE', 'CONTACT', 'BLUETOOTH'
   const [writeMode, setWriteMode] = useState('NONE'); 
 
   // Web Sitesi Modu Durumu
@@ -19,10 +19,6 @@ export default function App() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-
-  // Wi-Fi Modu Durumları
-  const [ssid, setSsid] = useState('');
-  const [wifiPassword, setWifiPassword] = useState('');
 
   // Bluetooth Modu Durumları
   const [macAddress, setMacAddress] = useState('');
@@ -72,18 +68,6 @@ export default function App() {
         await NfcManager.requestTechnology([NfcTech.Ndef]);
         bytes = Ndef.encodeMessage([
           Ndef.mimeMediaRecord('text/vcard', vCardData)
-        ]);
-
-      } else if (writeMode === 'WIFI') {
-        if (!ssid) {
-          Alert.alert('Hata', 'Wi-Fi ağ adı (SSID) zorunludur!');
-          setLoading(false);
-          return;
-        }
-        await NfcManager.requestTechnology([NfcTech.Ndef]);
-        // Wi-Fi konfigürasyonunu kütüphanenin native fonksiyonu ile oluşturuyoruz
-        bytes = Ndef.encodeMessage([
-          Ndef.wifiSimpleConnectionRecord(ssid, wifiPassword)
         ]);
 
       } else if (writeMode === 'BLUETOOTH') {
@@ -149,11 +133,6 @@ export default function App() {
             <Text style={styles.buttonText}>👤 KİŞİ KARTI (CONTACT) YAZ</Text>
           </TouchableOpacity>
 
-          {/* YENİ MODLAR: WİFİ ve BLUETOOTH */}
-          <TouchableOpacity style={[styles.button, styles.wifiButton]} onPress={() => setWriteMode('WIFI')}>
-            <Text style={styles.buttonText}>📶 WİFİ AĞI YAZ</Text>
-          </TouchableOpacity>
-
           <TouchableOpacity style={[styles.button, styles.bluetoothButton]} onPress={() => setWriteMode('BLUETOOTH')}>
             <Text style={styles.buttonText}>🎧 BLUETOOTH EŞLEŞTİRME YAZ</Text>
           </TouchableOpacity>
@@ -183,21 +162,6 @@ export default function App() {
           <TextInput style={styles.input} onChangeText={setEmail} value={email} placeholder="E-posta Adresi" keyboardType="email-address" placeholderTextColor="#666" />
           <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={writeNfcData} disabled={loading}>
             {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>KARTA KİŞİYİ YAZ</Text>}
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={() => setWriteMode('NONE')}>
-            <Text style={styles.cancelText}>Geri Dön</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* --- WİFİ INPUT EKRANI --- */}
-      {writeMode === 'WIFI' && (
-        <View style={styles.fullWidth}>
-          <Text style={styles.sectionTitle}>Wi-Fi Bilgilerini Doldurun:</Text>
-          <TextInput style={styles.input} onChangeText={setSsid} value={ssid} placeholder="Ağ Adı (SSID)" placeholderTextColor="#666" />
-          <TextInput style={styles.input} onChangeText={setWifiPassword} value={wifiPassword} placeholder="Ağ Şifresi (Açık ağ ise boş bırakın)" placeholderTextColor="#666" secureTextEntry={false} />
-          <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={writeNfcData} disabled={loading}>
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>KARTA WİFİ YAZ</Text>}
           </TouchableOpacity>
           <TouchableOpacity style={styles.cancelButton} onPress={() => setWriteMode('NONE')}>
             <Text style={styles.cancelText}>Geri Dön</Text>
@@ -236,7 +200,6 @@ const styles = StyleSheet.create({
   readButton: { backgroundColor: '#34c759' },
   writeButton: { backgroundColor: '#007AFF' },
   contactButton: { backgroundColor: '#af52de' },
-  wifiButton: { backgroundColor: '#f4a261' },
   bluetoothButton: { backgroundColor: '#2a9d8f' },
   saveButton: { backgroundColor: '#ff9500', marginTop: 10 },
   buttonText: { color: '#fff', fontSize: 15, fontWeight: 'bold' },
