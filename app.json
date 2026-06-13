@@ -1,24 +1,34 @@
 {
   "expo": {
-    "name": "nfc_app",
-    "slug": "nfc_app",
+    "name": "nfc-writer",
+    "slug": "nfc-writer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      "package": "com.anonymous.nfc_writer",
+      "permissions": [
+        "android.permission.NFC"
+      ]
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "plugins": [
+      [
+        "react-native-nfc-manager",
+        {
+          "nfcPermissionAndroid": "Uygulama NFC kartları okumak ve yazmak için izin istiyor."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0f75e265-3f6c-45b9-9819-d31c94209793"
+      }
     }
   }
 }
