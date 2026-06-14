@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "nfc-writer",
-    "slug": "nfc-writer",
+    "name": "nfc-craft",
+    "slug": "nfc-craft",
     "version": "1.0.4",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
