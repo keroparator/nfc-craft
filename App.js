@@ -159,10 +159,22 @@ export default function App() {
       if (copiedRecords) {
         let bytes = null;
         try {
-          // Hafızadaki veriyi karta uygun byte formatına geri çeviriyoruz
-          bytes = Ndef.encodeMessage(copiedRecords);
+          // Hafızadaki veriyi karta uygun byte formatına garantili çeviriyoruz
+          // tag.ndefMessage Uint8Array dönebilir, Ndef.encodeMessage saf Array bekler.
+          const formattedRecords = copiedRecords.map(record => ({
+            tnf: record.tnf,
+            type: record.type ? Array.from(record.type) : [],
+            id: record.id ? Array.from(record.id) : [],
+            payload: record.payload ? Array.from(record.payload) : []
+          }));
+          
+          bytes = Ndef.encodeMessage(formattedRecords);
         } catch (e) {
-          bytes = copiedRecords; // Eğer fallback gerekirse
+          console.warn("Veri Encode Hatası:", e);
+          Alert.alert('Hata', 'Kopyalanan veri yazılabilir formata dönüştürülemedi. Lütfen tekrar kopyalamayı deneyin.');
+          setLoading(false);
+          NfcManager.cancelTechnologyRequest();
+          return;
         }
         
         await NfcManager.ndefHandler.writeNdefMessage(bytes);
