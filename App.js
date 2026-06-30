@@ -131,9 +131,10 @@ export default function App() {
       const tag = await NfcManager.getTag();
 
       if (tag && tag.ndefMessage && tag.ndefMessage.length > 0) {
-        setCopiedRecords(tag.ndefMessage); // Veriyi hiçbir değişiklik yapmadan hafızaya alıyoruz
+        setCopiedRecords(tag.ndefMessage);
+        Alert.alert('OKUNAN VERİ (DEBUG)', JSON.stringify(tag.ndefMessage)); // <-- BUNU EKLE
         Alert.alert('Hafızaya Alındı!', 'Veri kopyalandı. Şimdi verinin yazılacağı (yapıştırılacağı) kartı yaklaştırın.');
-        setCopyStep(2); // 2. adıma (Yazma) geç
+        setCopyStep(2);
         setCardId('Veri hafızada bekliyor.');
       } else {
         Alert.alert('Hata', 'Bu kartta kopyalanabilecek bir veri (NDEF) bulunamadı veya kart boş.');
@@ -171,7 +172,7 @@ export default function App() {
           bytes = Ndef.encodeMessage(formattedRecords);
         } catch (e) {
           console.warn("Veri Encode Hatası:", e);
-          Alert.alert('Hata', 'Kopyalanan veri yazılabilir formata dönüştürülemedi. Lütfen tekrar kopyalamayı deneyin.');
+          Alert.alert('Hata', `Dönüştürme hatası: ${e?.message || JSON.stringify(e)}`);
           setLoading(false);
           NfcManager.cancelTechnologyRequest();
           return;
