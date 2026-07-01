@@ -33,9 +33,6 @@ NfcManager.start();
 // =================================================================================
 // TEMA RENKLERİ
 // =================================================================================
-// Sistem temasına ek olarak kullanıcı Settings ekranından manuel geçiş yapabilir.
-// themeOverride state'i null ise sistem teması, 'light'/'dark' ise manuel seçim kullanılır.
-
 const lightColors = {
   background: '#f8f9ff',
   surface: '#ffffff',
@@ -65,10 +62,6 @@ const darkColors = {
 // =================================================================================
 // CEVIRI SOZLUGU
 // =================================================================================
-// Tüm arayüz ve Alert metinleri burada tutulur. Dinamik içerik gerektiren anahtarlar
-// fonksiyon olarak tanımlanır (örn. cardCapturedMsg). t() ile aktif dile göre okunur.
-// statusKey state'i bu anahtarları tutar; böylece dil değişince status otomatik güncellenir.
-
 const translations = {
   tr: {
     readTabTitle: 'NFC Oku',
@@ -257,31 +250,22 @@ const translations = {
 // ANA BILESEN
 // =================================================================================
 export default function App() {
-  // --- TEMA ---
-  // useColorScheme sistem temasını okur. themeOverride null ise sistem kullanılır,
-  // 'light'/'dark' seçilmişse o değer öncelik kazanır.
   const systemColorScheme = useColorScheme();
   const [themeOverride, setThemeOverride] = useState(null);
   const effectiveScheme = themeOverride ?? systemColorScheme;
   const colors = effectiveScheme === 'dark' ? darkColors : lightColors;
   const styles = useMemo(() => getStyles(colors), [colors]);
 
-  // --- DIL ---
-  // Varsayılan dil İngilizce. t() aktif dile göre çeviriyi döndürür.
   const [language, setLanguage] = useState('en');
   const t = (key, ...args) => {
     const entry = translations[language][key];
     return typeof entry === 'function' ? entry(...args) : entry;
   };
 
-  // --- STATUS STATE'I ---
-  // statusKey: çeviri anahtarını tutar — dil değişince otomatik güncellenir.
-  // statusExtra: UID gibi çeviri gerektirmeyen ham değerleri tutar; varsa öncelik alır.
   const [statusKey, setStatusKey] = useState('waitingForScan');
   const [statusExtra, setStatusExtra] = useState(null);
   const statusText = statusExtra ?? t(statusKey);
 
-  // --- NFC VE FORM STATE'LERI ---
   const [loading, setLoading] = useState(false);
   const [writeMode, setWriteMode] = useState('NONE');
   const [url, setUrl] = useState('https://google.com');
@@ -290,10 +274,8 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [macAddress, setMacAddress] = useState('');
 
-  // --- ALT MENU STATE'I ---
   const [activeTab, setActiveTab] = useState('READ');
 
-  // --- KOPYALAMA AKISI STATE'LERI ---
   const [copyStep, setCopyStep] = useState(1);
   const [copiedRecords, setCopiedRecords] = useState(null);
 
@@ -303,7 +285,6 @@ export default function App() {
   // NFC ISLEMLERI
   // ===============================================================================
 
-  // Kartı okur ve UID'yi ekrana basar.
   async function startNfcScan() {
     try {
       setLoading(true);
@@ -323,7 +304,6 @@ export default function App() {
     }
   }
 
-  // writeMode'a göre karta NDEF verisi yazar veya kartı temizler.
   async function writeNfcData() {
     let bytes = null;
     try {
@@ -369,7 +349,6 @@ export default function App() {
     }
   }
 
-  // Kopyalama Adım 1: kaynak karttaki NDEF verisini okuyup hafızaya alır.
   async function handleCopyStep1() {
     try {
       setLoading(true);
@@ -397,7 +376,17 @@ export default function App() {
     }
   }
 
-  // Kopyalama Adım 2: hafızadaki veriyi hedef karta yazar.
+  // -----------------------------------------------------------------------
+  // DÜZELTME: handleCopyStep2
+  // Eski kod, copiedRecords'tan plain JS objeleri ({ tnf, type, id, payload })
+  // oluşturup doğrudan Ndef.encodeMessage'a veriyordu. Kütüphane içeride bu
+  // objelerin üzerinde kendi metodlarını çağırdığı için "undefined is not a
+  // function" hatası fırlatıyordu.
+  //
+  // Yeni kod, her record'un TNF + type değerine bakarak kütüphanenin kendi
+  // builder fonksiyonlarını (uriRecord / textRecord / mimeMediaRecord) çağırır
+  // ve bu sayede encodeMessage'ın beklediği tam yapıyı üretir.
+  // -----------------------------------------------------------------------
   async function handleCopyStep2() {
     try {
       setLoading(true);
@@ -408,14 +397,40 @@ export default function App() {
       if (copiedRecords) {
         let bytes = null;
         try {
-          // tag.ndefMessage Uint8Array dönebilir; Ndef.encodeMessage saf Array bekler.
-          const formattedRecords = copiedRecords.map((record) => ({
-            tnf: record.tnf,
-            type: record.type ? Array.from(record.type) : [],
-            id: record.id ? Array.from(record.id) : [],
-            payload: record.payload ? Array.from(record.payload) : [],
-          }));
-          bytes = Ndef.encodeMessage(formattedRecords);
+          const rebuiltRecords = copiedRecords.map((record) => {
+            const typeArr    = record.type    ? Array.from(record.type)    : [];
+            const payloadArr = record.payload ? Array.from(record.payload) : [];
+            const idArr      = record.id      ? Array.from(record.id)      : [];
+            const typeStr    = String.fromCharCode(...typeArr);
+
+            // TNF_WELL_KNOWN (1) + RTD_URI ("U") → Web sitesi / URL
+            if (record.tnf === 1 && typeStr === 'U') {
+              const uri = Ndef.uri.decodePayload(payloadArr);
+              return Ndef.uriRecord(uri);
+            }
+
+            // TNF_WELL_KNOWN (1) + RTD_TEXT ("T") → Düz metin
+            if (record.tnf === 1 && typeStr === 'T') {
+              const text = Ndef.text.decodePayload(payloadArr);
+              return Ndef.textRecord(text);
+            }
+
+            // TNF_MIME_MEDIA (2) → vCard ve Bluetooth dahil tüm MIME tipleri
+            if (record.tnf === 2) {
+              return Ndef.mimeMediaRecord(typeStr, payloadArr);
+            }
+
+            // Diğer / tanınmayan tipler için fallback
+            // (TNF_ABSOLUTE_URI=3, TNF_EXTERNAL_TYPE=4 vb.)
+            return {
+              tnf:     record.tnf,
+              type:    typeArr,
+              id:      idArr,
+              payload: payloadArr,
+            };
+          });
+
+          bytes = Ndef.encodeMessage(rebuiltRecords);
         } catch (e) {
           console.warn('Encode Hata:', e);
           Alert.alert(t('errorTitle'), t('encodeError'));
@@ -445,7 +460,6 @@ export default function App() {
   // EKRAN (RENDER) YARDIMCILARI
   // ===============================================================================
 
-  // Her ekranda görünen ortak başlık. Sağda Settings butonu bulunur.
   const renderHeader = (title) => (
     <View style={styles.header}>
       <Text style={styles.headerTitle}>{title}</Text>
@@ -455,7 +469,6 @@ export default function App() {
     </View>
   );
 
-  // "Oku" sekmesi.
   const renderReadTab = () => (
     <View style={styles.tabContainer}>
       {renderHeader(t('readTabTitle'))}
@@ -475,7 +488,6 @@ export default function App() {
     </View>
   );
 
-  // "Yaz" sekmesinin ana seçenek menüsü.
   const renderWriteOptions = () => {
     const options = [
       { mode: 'COPY',      emoji: '📋', titleKey: 'copyTitle',      descKey: 'copyDesc',      onPress: () => { setWriteMode('COPY'); setCopyStep(1); setCopiedRecords(null); } },
@@ -506,7 +518,6 @@ export default function App() {
     );
   };
 
-  // Seçilen veri tipine göre formu ve aksiyon butonunu gösteren ekran.
   const renderWriteForm = () => {
     let onPressAction = writeNfcData;
     let buttonText = writeMode === 'ERASE' ? t('eraseButton') : t('writeButton');
@@ -591,7 +602,6 @@ export default function App() {
     );
   };
 
-  // Settings ekranı: dil ve tema seçimi.
   const renderSettings = () => {
     const OptionButton = ({ label, selected, onPress }) => (
       <TouchableOpacity
@@ -675,8 +685,6 @@ export default function App() {
 // =================================================================================
 // STILLER
 // =================================================================================
-// getStyles(colors) ile tema değiştiğinde StyleSheet yeniden oluşturulur.
-// Bileşen içinde useMemo kullanarak gereksiz yeniden hesaplamalar önlenir.
 function getStyles(colors) {
   return StyleSheet.create({
     safeArea: {
