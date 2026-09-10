@@ -9,6 +9,7 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from 'react-native';
+import AdaptiveBannerAd from './src/components/AdaptiveBannerAd';
 import useNfc from './src/hooks/useNfc';
 import useMobileAds from './src/hooks/useMobileAds';
 import { translations } from './src/i18n/translations';
@@ -94,7 +95,6 @@ export default function App() {
                 setForm={setForm}
                 writeMode={writeMode}
                 setWriteMode={setWriteMode}
-                showBanner={ads.ready && activeTab === 'WRITE' && !nfc.loading}
               />
             </View>
             <View style={{ width, flex: 1 }}>
@@ -111,6 +111,7 @@ export default function App() {
             </View>
           </ScrollView>
         </View>
+        {ads.ready && <AdaptiveBannerAd styles={styles} t={t} />}
         <View style={styles.bottomNav}>
           {TABS.map(({ tab, icon, labelKey }) => (
             <TouchableOpacity

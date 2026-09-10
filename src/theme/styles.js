@@ -103,12 +103,14 @@ export default function getStyles(colors) {
 
     adContainer: {
       minHeight: 124,
+      width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
+      backgroundColor: colors.surfaceContainerLowest,
       borderTopWidth: 1,
       borderTopColor: colors.outlineVariant,
-      paddingTop: 12,
-      marginTop: 4,
+      paddingTop: 8,
+      paddingBottom: 4,
       overflow: 'hidden',
     },
     adLabel: {
@@ -118,6 +120,7 @@ export default function getStyles(colors) {
       color: colors.onSurfaceVariant,
       letterSpacing: 0.8,
       marginBottom: 8,
+      marginLeft: 12,
     },
 
     inputLabel: {

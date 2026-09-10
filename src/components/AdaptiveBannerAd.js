@@ -1,42 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import { bannerAdUnitId, isAdMobTestMode } from '../ads/config';
 
-const MIN_REQUEST_INTERVAL_MS = 60_000;
-let lastBannerRequestAt = 0;
+const RETRY_DELAY_MS = 60_000;
 
-export default function AdaptiveBannerAd({ visible, styles, t }) {
-  const [canRequest, setCanRequest] = useState(false);
-  const [failed, setFailed] = useState(false);
+export default function AdaptiveBannerAd({ styles, t }) {
+  const [requestKey, setRequestKey] = useState(0);
+  const retryTimerRef = useRef(null);
 
   useEffect(() => {
-    setCanRequest(false);
+    return () => {
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+    };
+  }, []);
 
-    if (!visible) return undefined;
-
-    const elapsed = Date.now() - lastBannerRequestAt;
-    const delay = Math.max(0, MIN_REQUEST_INTERVAL_MS - elapsed);
-    const timer = setTimeout(() => {
-      lastBannerRequestAt = Date.now();
-      setFailed(false);
-      setCanRequest(true);
-    }, delay);
-
-    return () => clearTimeout(timer);
-  }, [visible]);
-
-  if (!visible || !canRequest || failed || !bannerAdUnitId) return null;
+  if (!bannerAdUnitId) return null;
 
   return (
     <View style={styles.adContainer} accessibilityLabel={t('adAccessibilityLabel')}>
       <Text style={styles.adLabel}>{t(isAdMobTestMode ? 'testAdLabel' : 'adLabel')}</Text>
       <BannerAd
+        key={requestKey}
         unitId={bannerAdUnitId}
         size={BannerAdSize.LARGE_ANCHORED_ADAPTIVE_BANNER}
         onAdFailedToLoad={(error) => {
           console.warn('AdMob banner failed to load:', error);
-          setFailed(true);
+
+          if (retryTimerRef.current) return;
+          retryTimerRef.current = setTimeout(() => {
+            retryTimerRef.current = null;
+            setRequestKey((current) => current + 1);
+          }, RETRY_DELAY_MS);
         }}
       />
     </View>
