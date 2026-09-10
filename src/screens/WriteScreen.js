@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import ScreenHeader from '../components/ScreenHeader';
+import AdaptiveBannerAd from '../components/AdaptiveBannerAd';
 
 export default function WriteScreen({
   t,
@@ -18,6 +19,7 @@ export default function WriteScreen({
   setForm,
   writeMode,
   setWriteMode,
+  showBanner,
 }) {
   const { url, name, phone, email, macAddress } = form;
   const {
@@ -88,6 +90,7 @@ export default function WriteScreen({
               <Text style={styles.chevron}>›</Text>
             </TouchableOpacity>
           ))}
+          <AdaptiveBannerAd visible={showBanner} styles={styles} t={t} />
         </ScrollView>
       </View>
     );

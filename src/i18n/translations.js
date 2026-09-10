@@ -91,6 +91,12 @@ export const translations = {
     themeLight: 'Açık',
     themeDark: 'Koyu',
     settingsThemeNote: 'Sistem seçildiğinde cihazınızın tema ayarı kullanılır.',
+    settingsPrivacySection: 'Gizlilik',
+    privacyOptionsButton: 'Gizlilik seçenekleri',
+    privacyOptionsError: 'Gizlilik seçenekleri şu anda açılamıyor. Lütfen tekrar deneyin.',
+    adLabel: 'REKLAM',
+    testAdLabel: 'TEST REKLAMI',
+    adAccessibilityLabel: 'Reklam alanı',
   },
 
   en: {
@@ -187,5 +193,11 @@ export const translations = {
     themeLight: 'Light',
     themeDark: 'Dark',
     settingsThemeNote: 'When System is selected, your device theme preference is used.',
+    settingsPrivacySection: 'Privacy',
+    privacyOptionsButton: 'Privacy options',
+    privacyOptionsError: 'Privacy options are unavailable right now. Please try again.',
+    adLabel: 'ADVERTISEMENT',
+    testAdLabel: 'TEST ADVERTISEMENT',
+    adAccessibilityLabel: 'Advertisement area',
   },
 };

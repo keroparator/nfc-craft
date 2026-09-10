@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import ScreenHeader from '../components/ScreenHeader';
 
 function OptionButton({ label, selected, onPress, styles }) {
@@ -22,7 +22,14 @@ export default function SettingsScreen({
   setLanguage,
   themeOverride,
   setThemeOverride,
+  privacyOptionsRequired,
+  showPrivacyOptions,
 }) {
+  async function handlePrivacyOptions() {
+    const shown = await showPrivacyOptions();
+    if (!shown) Alert.alert(t('errorTitle'), t('privacyOptionsError'));
+  }
+
   return (
     <View style={styles.tabContainer}>
       <ScreenHeader title={t('settingsTabTitle')} styles={styles} />
@@ -69,6 +76,15 @@ export default function SettingsScreen({
           </View>
           <Text style={styles.settingsNote}>{t('settingsThemeNote')}</Text>
         </View>
+
+        {privacyOptionsRequired && (
+          <View style={styles.settingsSection}>
+            <Text style={styles.settingsSectionTitle}>{t('settingsPrivacySection')}</Text>
+            <TouchableOpacity style={styles.settingsAction} onPress={handlePrivacyOptions}>
+              <Text style={styles.settingsActionText}>{t('privacyOptionsButton')}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
