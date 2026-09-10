@@ -9,7 +9,9 @@ import {
   useColorScheme,
   useWindowDimensions,
 } from 'react-native';
+import AdaptiveBannerAd from './src/components/AdaptiveBannerAd';
 import useNfc from './src/hooks/useNfc';
+import useMobileAds from './src/hooks/useMobileAds';
 import { translations } from './src/i18n/translations';
 import ReadScreen from './src/screens/ReadScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
@@ -45,6 +47,7 @@ export default function App() {
     macAddress: '',
   });
   const nfc = useNfc({ t, form, writeMode, setWriteMode });
+  const ads = useMobileAds();
   const { width } = useWindowDimensions();
   const scrollViewRef = useRef(null);
 
@@ -102,10 +105,13 @@ export default function App() {
                 setLanguage={setLanguage}
                 themeOverride={themeOverride}
                 setThemeOverride={setThemeOverride}
+                privacyOptionsRequired={ads.privacyOptionsRequired}
+                showPrivacyOptions={ads.showPrivacyOptions}
               />
             </View>
           </ScrollView>
         </View>
+        {ads.ready && <AdaptiveBannerAd styles={styles} t={t} />}
         <View style={styles.bottomNav}>
           {TABS.map(({ tab, icon, labelKey }) => (
             <TouchableOpacity

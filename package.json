@@ -4,10 +4,12 @@
   "main": "index.js",
   "dependencies": {
     "expo": "~56.0.3",
+    "expo-build-properties": "~56.0.27",
     "expo-dev-client": "~56.0.18",
     "expo-system-ui": "~56.0.5",
     "react": "19.2.3",
     "react-native": "0.85.3",
+    "react-native-google-mobile-ads": "16.3.4",
     "react-native-nfc-manager": "4.0.0-beta.8"
   },
   "scripts": {
@@ -18,8 +20,8 @@
     "prebuild:android": "expo prebuild --platform android",
     "check:dependencies": "expo install --check",
     "check:bundle": "expo export --platform android --output-dir dist",
-    "format": "prettier --write App.js index.js src package.json app.json eas.json README.md",
-    "format:check": "prettier --check App.js index.js src package.json app.json eas.json README.md"
+    "format": "prettier --write App.js app.config.js index.js src package.json app.json eas.json README.md",
+    "format:check": "prettier --check App.js app.config.js index.js src package.json app.json eas.json README.md"
   },
   "private": true,
   "devDependencies": {

@@ -101,6 +101,28 @@ export default function getStyles(colors) {
     optionDesc: { fontSize: 14, color: colors.onSurfaceVariant, lineHeight: 20 },
     chevron: { fontSize: 24, color: colors.primary, paddingLeft: 16 },
 
+    adContainer: {
+      minHeight: 124,
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.surfaceContainerLowest,
+      borderTopWidth: 1,
+      borderTopColor: colors.outlineVariant,
+      paddingTop: 8,
+      paddingBottom: 4,
+      overflow: 'hidden',
+    },
+    adLabel: {
+      alignSelf: 'flex-start',
+      fontSize: 10,
+      fontWeight: '700',
+      color: colors.onSurfaceVariant,
+      letterSpacing: 0.8,
+      marginBottom: 8,
+      marginLeft: 12,
+    },
+
     inputLabel: {
       fontSize: 14,
       fontWeight: '500',
@@ -150,6 +172,15 @@ export default function getStyles(colors) {
     settingsOptionText: { fontSize: 14, fontWeight: '500', color: colors.onSurfaceVariant },
     settingsOptionTextSelected: { color: colors.primary, fontWeight: '700' },
     settingsNote: { fontSize: 12, color: colors.onSurfaceVariant, marginTop: 12, lineHeight: 18 },
+    settingsAction: {
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      borderWidth: 1,
+      borderColor: colors.outlineVariant,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    settingsActionText: { fontSize: 14, fontWeight: '600', color: colors.primary },
 
     bottomNav: {
       flexDirection: 'row',

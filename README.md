@@ -8,6 +8,7 @@ Expo 56 ve React Native 0.85 ile Android ağırlıklı geliştirilen, son kullan
 - NDEF etiketlerine web adresi, vCard kişi bilgisi veya Bluetooth OOB verisi yazma.
 - Bir etiketteki NDEF kayıtlarını başka bir etikete aktarma ve NDEF içeriğini temizleme.
 - Kaydırılabilir Oku, Yaz ve Ayarlar sekmeleri; Türkçe/İngilizce ve açık/koyu/sistem teması.
+- UMP onayından sonra Yaz menüsünde gösterilen tek bir uyarlanabilir AdMob banner'ı.
 
 Kopyalama UID veya korumalı kart alanlarını klonlamaz. Bluetooth eşleşmesinin ve vCard açılmasının davranışı etiketi okuyan cihazın desteğine bağlıdır.
 
@@ -55,12 +56,30 @@ npm run start:clear
 
 QR bağlantısı geliştirme istemcisini açmalıdır. Native paket veya `app.json` içindeki native ayar değişirse geliştirme APK'sını yeniden derleyip kur. Yalnızca JavaScript, stil veya çeviri değişikliklerinde yeniden APK üretmek gerekmez.
 
+AdMob native paketi bu projeye eklendiği için mevcut geliştirme APK'sı bir kez yeniden üretilmelidir. `development` ve `preview` profilleri Google'ın resmi test App ID/ad unit ID değerlerini kullanır; gerçek reklam isteği göndermez.
+
 Bağlantı kurulmazsa:
 
 - Telefonda terminaldeki laptop IP'sinin `http://IP:8081/status` adresini aç; `packager-status:running` yanıtı gelmeli.
 - VPN veya misafir Wi-Fi ağının cihazlar arası bağlantıyı engellemediğini kontrol et.
 - Laptop güvenlik duvarında yerel ağdan TCP 8081 erişiminin açık olduğundan emin ol.
 - Birden fazla ağ arayüzü varsa doğru Wi-Fi IP'siyle başlat: `REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.10 npm start` (örnek IP'yi değiştir).
+
+## AdMob test ve production geçişi
+
+Test reklamı yalnızca Yaz sekmesindeki işlem türü listesinin sonunda görünür. Bir yazma/kopyalama/silme formuna girildiğinde, sekmeden çıkıldığında veya NFC işlemi sürerken reklam kaldırılır. UMP onayı reklam SDK'sından önce çalışır; onay ya da reklam yüklemesi hata verirse NFC işlevleri çalışmaya devam eder.
+
+Production'a geçerken kod değiştirilmez. AdMob'daki Android uygulama ve banner kimliklerini EAS'in `production` ortamına eklemek yeterlidir:
+
+```sh
+npx eas-cli@20.0.0 env:create --environment production --name ADMOB_ANDROID_APP_ID --value "ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY" --visibility plaintext
+npx eas-cli@20.0.0 env:create --environment production --name EXPO_PUBLIC_ADMOB_ANDROID_BANNER_UNIT_ID --value "ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY" --visibility plaintext
+npx eas-cli@20.0.0 build --platform android --profile production
+```
+
+App ID `~`, banner ad unit ID ise `/` içerir. Bunlar gizli anahtar değildir ve uygulama paketinde görünür. Production profili bu iki değer eksik veya biçim olarak geçersizse build'i durdurur; test kimliğiyle mağaza build'i üretmez. iOS üretimi için eşdeğer `ADMOB_IOS_APP_ID` ve `EXPO_PUBLIC_ADMOB_IOS_BANNER_UNIT_ID` değişkenleri gerekir.
+
+Gerçek reklama geçmeden önce AdMob konsolunda uygulamayı/paket kimliğini eşleştir, Privacy & messaging altında UMP mesajını yayınla ve Play Console'da uygulamanın reklam içerdiğini beyan et. Native App ID değiştiği için production build mutlaka yeni bir native binary olmalıdır; yalnızca OTA update yeterli değildir.
 
 ## Kodun yerleşimi
 
@@ -74,6 +93,7 @@ src/i18n/translations.js    Türkçe ve İngilizce metinler
 src/theme/                 Renkler ve ortak stiller
 assets/icon.png            Uygulama ikonu
 app.json                   Native uygulama ve eklenti ayarları
+app.config.js              Test/production AdMob App ID ve native eklenti ayarları
 eas.json                  EAS derleme profilleri
 ```
 
