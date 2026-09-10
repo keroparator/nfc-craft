@@ -1,6 +1,6 @@
 # NFC Craft
 
-Expo 56 ve React Native 0.85 ile Android ağırlıklı geliştirilen NFC okuma/yazma uygulaması.
+Expo 56 ve React Native 0.85 ile Android ağırlıklı geliştirilen, son kullanıcıya yönelik NFC okuma/yazma uygulaması.
 
 ## Özellikler
 
