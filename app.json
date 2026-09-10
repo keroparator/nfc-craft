@@ -6,7 +6,8 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.keroparator.nfcwriter.test"
     },
     "android": {
       "package": "com.anonymous.nfc_writer",
