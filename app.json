@@ -2,33 +2,31 @@
   "expo": {
     "name": "nfc-writer",
     "slug": "nfc-writer",
-    "version": "0.0.9.4",
+    "version": "0.0.10",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "package": "com.anonymous.nfc_writer",
-      "permissions": [
-        "android.permission.NFC"
-      ]
+      "permissions": ["android.permission.NFC"]
     },
     "plugins": [
       [
         "react-native-nfc-manager",
         {
-          "nfcPermissionAndroid": "Uygulama NFC kartları okumak ve yazmak için izin istiyor."
+          "nfcPermission": "Uygulama NFC kartları okumak ve yazmak için izin istiyor."
         }
-      ]
+      ],
+      "expo-dev-client",
+      "expo-system-ui"
     ],
     "extra": {
       "eas": {
         "projectId": "0f75e265-3f6c-45b9-9819-d31c94209793"
       }
-    }
+    },
+    "icon": "./assets/icon.png"
   }
 }

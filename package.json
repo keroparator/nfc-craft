@@ -1,19 +1,31 @@
 {
   "name": "nfc_craft",
-  "version": "1.0.0",
+  "version": "0.0.10",
   "main": "index.js",
   "dependencies": {
     "expo": "~56.0.3",
-    "expo-status-bar": "~56.0.4",
+    "expo-dev-client": "~56.0.18",
+    "expo-system-ui": "~56.0.5",
     "react": "19.2.3",
     "react-native": "0.85.3",
-    "react-native-nfc-manager": "^3.17.2"
+    "react-native-nfc-manager": "4.0.0-beta.8"
   },
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --dev-client --lan",
+    "start:clear": "expo start --dev-client --lan --clear",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "prebuild:android": "expo prebuild --platform android",
+    "check:dependencies": "expo install --check",
+    "check:bundle": "expo export --platform android --output-dir dist",
+    "format": "prettier --write App.js index.js src package.json app.json eas.json README.md",
+    "format:check": "prettier --check App.js index.js src package.json app.json eas.json README.md"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^3.9.6"
+  },
+  "engines": {
+    "node": ">=20.19.4"
+  }
 }
