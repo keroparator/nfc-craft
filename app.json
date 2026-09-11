@@ -10,7 +10,7 @@
       "bundleIdentifier": "com.keroparator.nfcwriter.test"
     },
     "android": {
-      "package": "com.anonymous.nfc_writer",
+      "package": "com.pinek.nfccraft",
       "permissions": ["android.permission.NFC"]
     },
     "plugins": [
