@@ -7,7 +7,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.keroparator.nfcwriter.test"
+      "bundleIdentifier": "com.pinek.nfccraft"
     },
     "android": {
       "package": "com.pinek.nfccraft",
