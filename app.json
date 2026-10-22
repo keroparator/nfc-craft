@@ -6,10 +6,11 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pinek.nfccraft"
     },
     "android": {
-      "package": "com.anonymous.nfc_writer",
+      "package": "com.pinek.nfccraft",
       "permissions": ["android.permission.NFC"]
     },
     "plugins": [

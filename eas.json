@@ -19,6 +19,13 @@
         "EXPO_PUBLIC_ADMOB_MODE": "test"
       }
     },
+    "play-test": {
+      "autoIncrement": true,
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_ADMOB_MODE": "test"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "environment": "production",
